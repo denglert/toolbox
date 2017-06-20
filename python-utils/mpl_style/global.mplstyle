@@ -1,0 +1,55 @@
+# - Figure
+#figure.figsize   : 9.0, 6.0
+figure.figsize   : 6.0, 5.0
+figure.titlesize : 20
+
+# - Font
+font.size : 12
+
+#font.family : sans-serif
+#font.family : DejaVu-Sans
+#font.sans-serif : Helvetica
+
+font.family : Helvetica-normal
+font.style : normal
+
+# - Line
+lines.linewidth : 3
+lines.markersize : 1
+
+# - Axes
+axes.facecolor : white
+axes.titlesize : 15  # - Axis title size
+axes.labelsize : 15  # - Axis label size
+axes.unicode_minus : False
+axes.titlepad  : 15.0
+axes.grid : True
+
+#axes.titlepad  : 6.0
+
+### --- Ticks
+
+# - Major
+xtick.major.size  : 8
+xtick.major.width : 1.5
+ytick.major.size  : 5
+ytick.major.width : 1.5
+
+# - Minor
+xtick.minor.visible  : True
+ytick.minor.visible  : True
+xtick.minor.size  : 5
+xtick.minor.width : 1.5
+ytick.minor.size  : 2
+ytick.minor.width : 1.1
+
+# - lalel
+xtick.labelsize   : 12  # - x-tick label size
+ytick.labelsize   : 12  # - x-tick label size
+
+# - Subplot parameters
+figure.subplot.wspace : 0.7
+figure.subplot.hspace : 0.4
+
+# - Text
+text.usetex : False

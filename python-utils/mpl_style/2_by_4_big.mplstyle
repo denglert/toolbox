@@ -1,0 +1,43 @@
+# - Figure
+figure.titlesize : 25
+figure.figsize : 20.0, 10.0
+
+# - Font
+font.size : 10
+
+# - Line
+lines.linewidth : 3
+lines.markersize : 1
+
+# - Axes
+axes.facecolor : white
+axes.titlesize : 5
+axes.labelsize : 22
+#axes.titlepad  : 6.0
+
+# - Ticks
+xtick.major.size  : 8
+xtick.major.width : 1.5
+xtick.minor.size  : 5
+xtick.minor.width : 1.5
+ytick.minor.size  : 2
+ytick.minor.width : 1.1
+ytick.major.size  : 5
+ytick.major.width : 1.5
+xtick.labelsize   : 17
+ytick.labelsize   : 17
+
+
+# - Subplot parameters
+figure.subplot.wspace : 0.7
+figure.subplot.hspace : 0.4
+
+#font.family : sans-serif
+#font.sans-serif : Helvetica
+
+# Latex
+#plt.rc('font',**{'family':'sans-serif','sans-serif':['Helvetica']})
+### for Palatino and other serif fonts use:
+##rc('font',**{'family':'serif','serif':['Palatino']})
+#rc('text', usetex=True)
+
