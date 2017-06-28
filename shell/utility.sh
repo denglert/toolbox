@@ -27,3 +27,18 @@ replaceAllOccurrences()
 	find . -type f -not -path "*/.git/*" -exec sed -i "s/${OLD}/${NEW}/g" {} +
 	fi
 }
+
+check_git_version()
+{
+	DIRS=$(ls -d */)
+	
+	for DIR in ${DIRS[@]};
+	do
+		if [ -d "${DIR}/.git/" ]; then
+			cd ${DIR};
+			GIT_INFO=$(git log -1 --format=%H\ -\ %cd)
+			cd ..
+			printf "%30s %s\n" ${DIR}, "${GIT_INFO}"
+		fi
+	done
+}
