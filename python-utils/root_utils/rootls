@@ -1,0 +1,50 @@
+#!/usr/bin/env python
+
+import sys
+import cmd
+from ROOT import TFile, TCanvas, TH1D, gROOT, TStyle, gPad, TText, TLegend, TLatex
+
+def main( input_file ):
+
+    tf = TFile( input_file )
+    tf.Print()
+
+    print("\nGetListOfKeys().Print()\n")
+    tf.GetListOfKeys().Print()
+
+    prompt = CmdPrompt(tf)
+    prompt.cmdloop()
+
+class CmdPrompt(cmd.Cmd):
+    """Simple command processor example."""
+
+    def __init__(self, tf):
+
+        self.tf = tf
+        self.tree = 0
+        cmd.Cmd.__init__(self)
+    
+    def do_gt(self, line):
+        print("Loading in tree `{}`".format(line))
+        self.tree = self.tf.Get(line)
+
+    def do_print(self, line):
+        self.tree.Print()
+        #self.tree.GetListOfBranches().Print()
+
+    def do_ls(self, line):
+        branches = self.tree.GetListOfBranches()
+        entries = self.tree.GetEntryList() 
+        for branch in branches:
+            print(branch.GetName())
+    
+    def do_exit(self, line):
+        return True
+
+if __name__ == "__main__":
+
+    if len(sys.argv) == 2:
+        input_file = sys.argv[1]
+        main(input_file)
+    else:
+        print("Usage: rootls.py <input-file>")
