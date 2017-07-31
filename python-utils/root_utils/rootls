@@ -21,24 +21,30 @@ class CmdPrompt(cmd.Cmd):
     def __init__(self, tf):
 
         self.tf = tf
-        self.tree = 0
+        self.obj = 0
         cmd.Cmd.__init__(self)
     
-    def do_gt(self, line):
-        print("Loading in tree `{}`".format(line))
-        self.tree = self.tf.Get(line)
+    def do_get(self, line):
+        print("Loading in object `{}`".format(line))
+        self.obj = self.tf.Get(line)
 
     def do_print(self, line):
-        self.tree.Print()
+        self.obj.Print()
         #self.tree.GetListOfBranches().Print()
 
-    def do_ls(self, line):
-        branches = self.tree.GetListOfBranches()
-        entries = self.tree.GetEntryList() 
+    def do_treels(self, line):
+        branches = self.obj.GetListOfBranches()
+        entries = self.obj.GetEntryList() 
         for branch in branches:
             print(branch.GetName())
     
     def do_exit(self, line):
+        return True
+
+    def do_quit(self, line):
+        return True
+
+    def do_q(self, line):
         return True
 
 if __name__ == "__main__":
