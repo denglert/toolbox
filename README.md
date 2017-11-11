@@ -8,8 +8,8 @@ The list of packages around which these scripts/modules are built around include
 - `jupyter`
 - `matplotlib`
 - `ROOT`
-- ...
-
+- `RooFit`
+- `MadGraph`
 
 ## Setup
 
