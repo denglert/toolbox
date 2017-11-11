@@ -3,13 +3,14 @@
 This repo contains a collection of utility scripts and templates, making my everyday life a bit
 easier.
 
-The list of packages around which these scripts/modules are built around include:
+The list of packages around which these scripts/modules are built include:
 - `pandas`
 - `jupyter`
 - `matplotlib`
 - `ROOT`
 - `RooFit`
 - `MadGraph`
+- ...
 
 ## Setup
 
