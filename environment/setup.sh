@@ -4,4 +4,5 @@
 
 TOOLBOX_DIR=$(pwd)
 
-export MATPLOTLIB_STYLES_DIR=${TOOLBOX_DIR}/matplotlib/stlyes/
+export ENV_MATPLOTLIB_STYLES_DIR=${TOOLBOX_DIR}/python/matplotlib/styles/
+export ENV_JUPYTER_SETUPS_DIR=${TOOLBOX_DIR}/python/jupyter/setups/

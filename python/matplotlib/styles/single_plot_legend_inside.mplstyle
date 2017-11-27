@@ -3,7 +3,7 @@ figure.figsize   : 9.0, 6.0
 figure.titlesize : 20
 
 # - Font
-font.size : 16
+font.size : 20
 
 #font.family : sans-serif
 #font.family : DejaVu-Sans

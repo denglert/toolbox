@@ -8,14 +8,14 @@ import os
 import scipy
 
 # - Load environment variables
-ENV_MATPLOTLIB_STYLES = os.environ['ENV_MATPLOTLIB_STYLES']
+ENV_MATPLOTLIB_STYLES_DIR = os.environ['ENV_MATPLOTLIB_STYLES_DIR']
 
 # - Auto reload import libraries
 get_ipython().magic('load_ext autoreload')
 get_ipython().magic('autoreload 2')
 
 # - Load in matplotline style file
-plt.style.use( os.path.join( ENV_MATPLOTLIB_STYLES, 'single_plot.mplstyle'))
+plt.style.use( os.path.join( ENV_MATPLOTLIB_STYLES_DIR, 'single_plot.mplstyle'))
 
 # - Pandas settings
 pd.options.display.max_seq_items = 2000
