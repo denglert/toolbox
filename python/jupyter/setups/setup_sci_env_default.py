@@ -25,7 +25,7 @@ get_ipython().magic('matplotlib inline')
 
 # - Convert notebook to html
 def save_to_html(notebook, output_html):
-    from nbconvert import import HTMLExporter
+    from nbconvert import HTMLExporter
     import codecs
     import nbformat
     exporter = HTMLExporter()
