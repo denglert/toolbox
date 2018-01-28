@@ -6,6 +6,7 @@ import matplotlib as mpl
 from matplotlib.colors import LinearSegmentedColormap
 import os
 import scipy
+from scipy import stats
 
 # - Load environment variables
 ENV_MATPLOTLIB_STYLES_DIR = os.environ['ENV_MATPLOTLIB_STYLES_DIR']
