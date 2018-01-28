@@ -5,6 +5,7 @@ from matplotlib      import ticker, colors
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from scipy.ndimage.filters import gaussian_filter
 
+
 def pandas_pixel( df,
                   x_col,
                   y_col,
@@ -66,44 +67,41 @@ def pandas_pixel( df,
 
     return fig, ax
 
-def pandas_contour( df, x_col, y_col, z_col, **kwargs ):
+
+def create_griddata(x, y, z, interp='linear', x_num=100, y_num=100, gaussian_filter_sigma=None):
+
+    xmin, xmax = x.min(), x.max()
+    ymin, ymax = y.min(), y.max()
+
+    xi = np.linspace( xmin,  xmax, x_num, endpoint=True )
+    yi = np.linspace( ymin,  ymax, y_num, endpoint=True )
+
+    if gaussian_filter_sigma is not None:
+        z = gaussian_filter(z, gaussian_filter_sigma)
+
+    zi = griddata(x, y, z, xi, yi, interp=interp)
+
+    return xi, yi, zi
+
+
+def pandas_contour(df, x_col, y_col, z_col,
+                   interp='linear', x_num=100, y_num=100,
+                   gaussian_filter_sigma=None,
+                   contour_kwargs={},
+                   **kwargs):
 
     if 'ax' not in kwargs:
         fig, ax = plt.subplots(nrows=1, ncols=1, sharex=True)
     else:
         ax = kwargs['ax']
 
-    x = df[x_col]
-    y = df[y_col]
-    z = df[z_col]
-    
-    xmin = x.min()
-    xmax = x.max()
-    ymin = y.min()
-    ymax = y.max()
+    x, y, z = df[x_col], df[y_col], df[z_col]
 
-    if 'gaussian_filter_sigma' in kwargs:
-        z = gaussian_filter(z, kwargs['gaussian_filter_sigma'])
+    xi, yi, zi = create_griddata(x, y, z, interp=interp, x_num=x_num, y_num=y_num,
+            gaussian_filter_sigma=gaussian_filter_sigma)
 
-    xi = np.linspace( xmin,  xmax, 100, endpoint=True )
-    yi = np.linspace( ymin,  ymax, 100, endpoint=True )
-    zi = griddata(x, y, z, xi, yi, interp='linear')
+    cs = plt.contour(xi, yi, zi, **contour_kwargs)
 
-    if 'contour_levels' in kwargs:
-        ### --- Contours --- ###
-        if 'contour_colormap' in kwargs:
-            cs = plt.contour(xi, yi, zi, kwargs['contour_levels'],
-                    cmap=kwargs['contour_colormap'], extend='both' )
-        else:
-            if 'contour_colors' in kwargs:
-                cs = plt.contour(xi, yi, zi, kwargs['contour_levels'], colors=kwargs['contour_colors'])
-            else:
-                cs = plt.contour(xi, yi, zi, kwargs['contour_levels'] )
-    else:
-        if 'contour_colors' in kwargs:
-            cs = plt.contour(xi, yi, zi, colors=kwargs['contour_colors'])
-        else:
-            cs = plt.contour(xi, yi, zi)
 
     if 'clabel' in kwargs: 
         plt.clabel(cs, inline=1)
@@ -118,9 +116,10 @@ def pandas_contour( df, x_col, y_col, z_col, **kwargs ):
    #        cs = plt.contourf(xi, yi, zi, kwargs['cb_levels'],
    #                cmap=kwargs['cb_colormap'], extend='both' )
 
-    if 'under' and 'over' in kwargs:
-        cs.cmap.set_over('red')
-        cs.cmap.set_under('navy')
+    if 'under' in kwargs:
+        cs.cmap.set_over(kwargs['under'])
+    if 'over' in kwargs:
+        cs.cmap.set_under(kwargs['over'])
 
     if 'CB' in kwargs:
         CB = plt.colorbar(cs, ax=ax, extend='max')
@@ -141,6 +140,28 @@ def pandas_contour( df, x_col, y_col, z_col, **kwargs ):
         plt.xlabel(   kwargs['xlabel'], labelpad=10, fontsize=18)
     if 'ylabel' in kwargs:
         plt.ylabel(   kwargs['ylabel'], labelpad=10, fontsize=18)
+
+    if 'ax' not in kwargs:
+        return fig, ax
+
+
+def pandas_contourf(df, x_col, y_col, z_col,
+                   interp='linear', x_num=100, y_num=100,
+                   gaussian_filter_sigma=None,
+                   contourf_kwargs={},
+                   **kwargs):
+
+    if 'ax' not in kwargs:
+        fig, ax = plt.subplots(nrows=1, ncols=1, sharex=True)
+    else:
+        ax = kwargs['ax']
+
+    x, y, z = df[x_col], df[y_col], df[z_col]
+
+    xi, yi, zi = create_griddata(x, y, z, interp=interp, x_num=x_num, y_num=y_num,
+            gaussian_filter_sigma=gaussian_filter_sigma)
+
+    plt.contourf(xi, yi, zi, **contourf_kwargs)
 
     if 'ax' not in kwargs:
         return fig, ax
