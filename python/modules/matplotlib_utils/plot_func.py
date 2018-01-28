@@ -2,6 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.mlab import griddata
 from matplotlib      import ticker, colors
+from mpl_toolkits.axes_grid1 import make_axes_locatable
+from scipy.ndimage.filters import gaussian_filter
 
 def pandas_pixel( df,
                   x_col,
@@ -66,7 +68,10 @@ def pandas_pixel( df,
 
 def pandas_contour( df, x_col, y_col, z_col, **kwargs ):
 
-    fig, ax = plt.subplots(nrows=1, ncols=1, sharex=True)
+    if 'ax' not in kwargs:
+        fig, ax = plt.subplots(nrows=1, ncols=1, sharex=True)
+    else:
+        ax = kwargs['ax']
 
     x = df[x_col]
     y = df[y_col]
@@ -76,6 +81,9 @@ def pandas_contour( df, x_col, y_col, z_col, **kwargs ):
     xmax = x.max()
     ymin = y.min()
     ymax = y.max()
+
+    if 'gaussian_filter_sigma' in kwargs:
+        z = gaussian_filter(z, kwargs['gaussian_filter_sigma'])
 
     xi = np.linspace( xmin,  xmax, 100, endpoint=True )
     yi = np.linspace( ymin,  ymax, 100, endpoint=True )
@@ -87,7 +95,17 @@ def pandas_contour( df, x_col, y_col, z_col, **kwargs ):
             cs = plt.contour(xi, yi, zi, kwargs['contour_levels'],
                     cmap=kwargs['contour_colormap'], extend='both' )
         else:
-            cs = plt.contour(xi, yi, zi, kwargs['contour_levels'] )
+            if 'contour_colors' in kwargs:
+                cs = plt.contour(xi, yi, zi, kwargs['contour_levels'], colors=kwargs['contour_colors'])
+            else:
+                cs = plt.contour(xi, yi, zi, kwargs['contour_levels'] )
+    else:
+        if 'contour_colors' in kwargs:
+            cs = plt.contour(xi, yi, zi, colors=kwargs['contour_colors'])
+        else:
+            cs = plt.contour(xi, yi, zi)
+
+    if 'clabel' in kwargs: 
         plt.clabel(cs, inline=1)
 	
    #if 'cb_logscale' in kwargs:
@@ -100,11 +118,12 @@ def pandas_contour( df, x_col, y_col, z_col, **kwargs ):
    #        cs = plt.contourf(xi, yi, zi, kwargs['cb_levels'],
    #                cmap=kwargs['cb_colormap'], extend='both' )
 
-    if 'under' in kwargs:
+    if 'under' and 'over' in kwargs:
         cs.cmap.set_over('red')
         cs.cmap.set_under('navy')
 
-    CB = plt.colorbar(cs, ax=ax, extend='max')
+    if 'CB' in kwargs:
+        CB = plt.colorbar(cs, ax=ax, extend='max')
 	
     if 'cb_ticks' in kwargs:
     	CB.set_ticks     ( kwargs['cb_ticks'] )
@@ -123,7 +142,8 @@ def pandas_contour( df, x_col, y_col, z_col, **kwargs ):
     if 'ylabel' in kwargs:
         plt.ylabel(   kwargs['ylabel'], labelpad=10, fontsize=18)
 
-    return fig, ax
+    if 'ax' not in kwargs:
+        return fig, ax
 
 
 def plot_map( plotSettings, x, y, z ):
