@@ -88,6 +88,7 @@ def pandas_contour(df, x_col, y_col, z_col,
                    interp='linear', x_num=100, y_num=100,
                    gaussian_filter_sigma=None,
                    contour_kwargs={},
+                   *args,
                    **kwargs):
 
     if 'ax' not in kwargs:
@@ -97,8 +98,14 @@ def pandas_contour(df, x_col, y_col, z_col,
 
     x, y, z = df[x_col], df[y_col], df[z_col]
 
+
     xi, yi, zi = create_griddata(x, y, z, interp=interp, x_num=x_num, y_num=y_num,
-            gaussian_filter_sigma=gaussian_filter_sigma)
+                gaussian_filter_sigma=gaussian_filter_sigma)
+
+    if 'resize' in kwargs:
+        xi, yi, zi = np.resize(x, kwargs['resize']), np.resize(y, kwargs['resize']), np.resize(z, kwargs['resize'])
+        if gaussian_filter_sigma is not None:
+            zi = gaussian_filter(zi, gaussian_filter_sigma)
 
     cs = plt.contour(xi, yi, zi, **contour_kwargs)
 

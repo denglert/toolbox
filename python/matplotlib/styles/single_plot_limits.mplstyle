@@ -9,8 +9,8 @@ font.size : 16
 #font.family : DejaVu-Sans
 #font.sans-serif : Helvetica
 
-font.family : Helvetica-normal
-font.style : normal
+#font.family : Helvetica-normal
+#font.style : normal
 
 # - Line
 lines.linewidth : 12
