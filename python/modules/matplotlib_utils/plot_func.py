@@ -16,14 +16,14 @@ def pandas_pixel( df,
     from mpl_toolkits.axes_grid1 import make_axes_locatable
     
     sorted = df.sort_values( by=[y_col, x_col], ascending=[False,True] )
-    array  = np.array( sorted[z_col] )
+    array  = np.array(sorted[z_col])
 
     # - Get the number of bins in along each dimension
     nrows = df[y_col].nunique()
     ncols = df[x_col].nunique()
 
     # - Reshape the array to match the image layout
-    grid = array.reshape((nrows, ncols))
+    grid = np.resize(array, (nrows, ncols))
 
     # - Create figures
     fig, ax = plt.subplots(nrows=1, ncols=1, sharex=True )
