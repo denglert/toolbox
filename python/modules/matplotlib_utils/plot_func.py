@@ -14,6 +14,12 @@ def pandas_pixel( df,
                   ):
 
     from mpl_toolkits.axes_grid1 import make_axes_locatable
+
+    # - Create new figure and axis if not passed as keyword.
+    if 'ax' not in kwargs:
+        fig, ax = plt.subplots(nrows=1, ncols=1, sharex=True)
+    else:
+        ax = kwargs['ax']
     
     sorted = df.sort_values( by=[y_col, x_col], ascending=[False,True] )
     array  = np.array(sorted[z_col])
@@ -25,8 +31,6 @@ def pandas_pixel( df,
     # - Reshape the array to match the image layout
     grid = np.resize(array, (nrows, ncols))
 
-    # - Create figures
-    fig, ax = plt.subplots(nrows=1, ncols=1, sharex=True )
     if 'cb_colormap' in kwargs:
         im = ax.imshow(grid, interpolation='nearest', cmap=kwargs['cb_colormap'])
     else:
@@ -65,7 +69,8 @@ def pandas_pixel( df,
     if 'ylabel' in kwargs:
         ax.set_ylabel( kwargs['ylabel'] )
 
-    return fig, ax
+    if 'ax' not in kwargs:
+        return fig, ax
 
 
 def create_griddata(x, y, z, interp='linear', x_num=100, y_num=100, gaussian_filter_sigma=None):
@@ -91,6 +96,7 @@ def pandas_contour(df, x_col, y_col, z_col,
                    *args,
                    **kwargs):
 
+    # - Create new figure and axis if not passed as keyword.
     if 'ax' not in kwargs:
         fig, ax = plt.subplots(nrows=1, ncols=1, sharex=True)
     else:
@@ -112,35 +118,33 @@ def pandas_contour(df, x_col, y_col, z_col,
 
     if 'clabel' in kwargs: 
         plt.clabel(cs, inline=1)
-	
-   #if 'cb_logscale' in kwargs:
-   #    cs = plt.contourf(xi, yi, zi, kwargs['cb_levels'], norm=colors.LogNorm(),
-   #            cmap=kwargs['cb_colormap'])
-   #else:
-   #    if 'cb_levels' in kwargs and kwargs['cb_levels'] == 'auto':
-   #        cs = plt.contourf(xi, yi, zi, cmap=kwargs['cb_colormap'], extend='both' )
-   #    else:
-   #        cs = plt.contourf(xi, yi, zi, kwargs['cb_levels'],
-   #                cmap=kwargs['cb_colormap'], extend='both' )
+    
+    #if 'cb_logscale' in kwargs:
+    #    cs = plt.contourf(xi, yi, zi, kwargs['cb_levels'], norm=colors.LogNorm(),
+    #            cmap=kwargs['cb_colormap'])
+    #else:
+    #    if 'cb_levels' in kwargs and kwargs['cb_levels'] == 'auto':
+    #        cs = plt.contourf(xi, yi, zi, cmap=kwargs['cb_colormap'], extend='both' )
+    #    else:
+    #       cs = plt.contourf(xi, yi, zi)
 
     if 'under' in kwargs:
         cs.cmap.set_over(kwargs['under'])
     if 'over' in kwargs:
         cs.cmap.set_under(kwargs['over'])
 
-    if 'CB' in kwargs:
-        CB = plt.colorbar(cs, ax=ax, extend='max')
+    cb = plt.colorbar(cs, ax=ax, extend='max')
 	
     if 'cb_ticks' in kwargs:
-    	CB.set_ticks     ( kwargs['cb_ticks'] )
-    	CB.set_ticklabels( kwargs['cb_ticklabels'] )
+    	cb.set_ticks     ( kwargs['cb_ticks'] )
+    	cb.set_ticklabels( kwargs['cb_ticklabels'] )
     
     plt.locator_params(axis='y', nbins=11)
     plt.subplots_adjust(left=0.1, right=0.95, top=0.9, bottom=0.12)
     
     # - Labels
     if 'cb_label' in kwargs:
-        CB.set_label( kwargs['cb_label'] )
+        cb.set_label( kwargs['cb_label'] )
     if 'title' in kwargs:
         fig.suptitle( kwargs['title'], fontsize=14)
     if 'xlabel' in kwargs:
@@ -168,7 +172,9 @@ def pandas_contourf(df, x_col, y_col, z_col,
     xi, yi, zi = create_griddata(x, y, z, interp=interp, x_num=x_num, y_num=y_num,
             gaussian_filter_sigma=gaussian_filter_sigma)
 
-    plt.contourf(xi, yi, zi, **contourf_kwargs)
+    cs = plt.contourf(xi, yi, zi, **contourf_kwargs)
+
+    cb = plt.colorbar(cs, ax=ax, extend='max')
 
     if 'ax' not in kwargs:
         return fig, ax
