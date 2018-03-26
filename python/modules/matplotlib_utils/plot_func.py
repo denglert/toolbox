@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.cm as cm
 from matplotlib.mlab import griddata
 from matplotlib      import ticker, colors
 from mpl_toolkits.axes_grid1 import make_axes_locatable
@@ -93,8 +94,12 @@ def pandas_contour(df, x_col, y_col, z_col,
                    interp='linear', x_num=100, y_num=100,
                    gaussian_filter_sigma=None,
                    contour_kwargs={},
+                   colorbar_kwargs={},
+                   clabel_kwargs={},
                    *args,
                    **kwargs):
+
+    isColorbar = False
 
     # - Create new figure and axis if not passed as keyword.
     if 'ax' not in kwargs:
@@ -116,8 +121,8 @@ def pandas_contour(df, x_col, y_col, z_col,
     cs = plt.contour(xi, yi, zi, **contour_kwargs)
 
 
-    if 'clabel' in kwargs: 
-        plt.clabel(cs, inline=1)
+    if clabel_kwargs: 
+        plt.clabel(cs, **clabel_kwargs)
     
     #if 'cb_logscale' in kwargs:
     #    cs = plt.contourf(xi, yi, zi, kwargs['cb_levels'], norm=colors.LogNorm(),
@@ -133,8 +138,10 @@ def pandas_contour(df, x_col, y_col, z_col,
     if 'over' in kwargs:
         cs.cmap.set_under(kwargs['over'])
 
-    cb = plt.colorbar(cs, ax=ax, extend='max')
-	
+    if not colorbar_kwargs == False:
+        cb = plt.colorbar(cs, ax=ax, **colorbar_kwargs)
+        isColorbar = True
+
     if 'cb_ticks' in kwargs:
     	cb.set_ticks     ( kwargs['cb_ticks'] )
     	cb.set_ticklabels( kwargs['cb_ticklabels'] )
@@ -152,15 +159,31 @@ def pandas_contour(df, x_col, y_col, z_col,
     if 'ylabel' in kwargs:
         plt.ylabel(   kwargs['ylabel'], labelpad=10, fontsize=18)
 
-    if 'ax' not in kwargs:
-        return fig, ax
 
+    return_list = []
+
+    if 'ax' not in kwargs:
+        return_list.append(fig)
+        return_list.append(ax)
+
+    if isColorbar:
+        return_list.append(cb)
+
+    return_tuple = tuple(return_list)
+
+    if len(return_tuple) == 1:
+        return return_tuple[0]
+    else:
+        return return_tuple
 
 def pandas_contourf(df, x_col, y_col, z_col,
                    interp='linear', x_num=100, y_num=100,
                    gaussian_filter_sigma=None,
                    contourf_kwargs={},
+                   colorbar_kwargs={},
                    **kwargs):
+
+    isColorbar = False
 
     if 'ax' not in kwargs:
         fig, ax = plt.subplots(nrows=1, ncols=1, sharex=True)
@@ -172,13 +195,39 @@ def pandas_contourf(df, x_col, y_col, z_col,
     xi, yi, zi = create_griddata(x, y, z, interp=interp, x_num=x_num, y_num=y_num,
             gaussian_filter_sigma=gaussian_filter_sigma)
 
+
+
     cs = plt.contourf(xi, yi, zi, **contourf_kwargs)
 
-    cb = plt.colorbar(cs, ax=ax, extend='max')
+    # - 
+    # - https://stackoverflow.com/questions/43150687/colorbar-limits-are-not-respecting-set-vmin-vmax-in-plt-contourf-how-can-i-more
+    if 'clim_min' in kwargs:
+        m = plt.cm.ScalarMappable(cmap=kwargs['clim_cmap'])
+        m.set_array(zi)
+        m.set_clim(kwargs['clim_min'], kwargs['clim_max'])
+        cb = plt.colorbar(m, boundaries=np.arange(kwargs['clim_min'], kwargs['clim_max'],
+            kwargs['clim_space']))
+        isColorbar = True
+
+    if not colorbar_kwargs == False:
+        cb = plt.colorbar(cs, ax=ax, **colorbar_kwargs)
+        isColorbar = True
+
+    return_list = []
 
     if 'ax' not in kwargs:
-        return fig, ax
+        return_list.append(fig)
+        return_list.append(ax)
 
+    if isColorbar:
+        return_list.append(cb)
+
+    return_tuple = tuple(return_list)
+
+    if len(return_tuple) == 1:
+        return return_tuple[0]
+    else:
+        return return_tuple
 
 def plot_map( plotSettings, x, y, z ):
 
