@@ -92,11 +92,7 @@ def create_griddata(x, y, z, x_num=100, y_num=100,  interp='cubic', backend='sci
     if backend == 'scipy':
         
         # - Original points
-        #xy_points = np.array(list(zip(x,y)))
-        xy_points = np.array(list(itertools.product(*[x,y])))
-        print(xy_points.shape)
-        print(xy_points)
-        #xy_points = zip(x,y)
+        xy_points = np.array(list(zip(x,y)))
 
         # - Interpolating at points
         Xi,Yi = np.meshgrid(xi,yi)
