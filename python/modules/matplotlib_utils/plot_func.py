@@ -3,10 +3,12 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
-from matplotlib.mlab import griddata
+import itertools
 from matplotlib      import ticker, colors
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from scipy.ndimage.filters import gaussian_filter
+from scipy.interpolate import griddata as griddata_scipy
+from matplotlib.mlab import griddata as griddata_mlab
 
 
 def pandas_pixel( df,
@@ -76,7 +78,7 @@ def pandas_pixel( df,
         return fig, ax
 
 
-def create_griddata(x, y, z, interp='linear', x_num=100, y_num=100, gaussian_filter_sigma=None):
+def create_griddata(x, y, z, x_num=100, y_num=100,  interp='cubic', backend='scipy', gaussian_filter_sigma=None):
 
     xmin, xmax = x.min(), x.max()
     ymin, ymax = y.min(), y.max()
@@ -86,17 +88,35 @@ def create_griddata(x, y, z, interp='linear', x_num=100, y_num=100, gaussian_fil
 
     if gaussian_filter_sigma is not None:
         z = gaussian_filter(z, gaussian_filter_sigma)
+    
+    if backend == 'scipy':
+        
+        # - Original points
+        #xy_points = np.array(list(zip(x,y)))
+        xy_points = np.array(list(itertools.product(*[x,y])))
+        print(xy_points.shape)
+        print(xy_points)
+        #xy_points = zip(x,y)
 
-    zi = griddata(x, y, z, xi, yi, interp=interp)
+        # - Interpolating at points
+        Xi,Yi = np.meshgrid(xi,yi)
+
+        zi = griddata_scipy(xy_points, z, (Xi, Yi), method=interp)
+    elif backend == 'mlab':
+        zi = griddata_mlab(x, y, z, xi, yi, interp=interp)
+    else:
+        print("Unknown backend. Available backends are`scipy` and `mlab`.")
+        exit()
+    
 
     return xi, yi, zi
 
 
 def pandas_contour(df, x_col, y_col, z_col,
-                   interp='linear', x_num=100, y_num=100,
+                   interp='cubic', x_num=100, y_num=100,
                    gaussian_filter_sigma=None,
                    contour_kwargs={},
-                   colorbar_kwargs={},
+                   colorbar_kwargs=False,
                    clabel_kwargs={},
                    *args,
                    **kwargs):
@@ -179,10 +199,10 @@ def pandas_contour(df, x_col, y_col, z_col,
         return return_tuple
 
 def pandas_contourf(df, x_col, y_col, z_col,
-                   interp='linear', x_num=100, y_num=100,
+                   interp='cubic', x_num=100, y_num=100,
                    gaussian_filter_sigma=None,
                    contourf_kwargs={},
-                   colorbar_kwargs={},
+                   colorbar_kwargs=False,
                    **kwargs):
 
     isColorbar = False
@@ -237,7 +257,7 @@ def plot_map( plotSettings, x, y, z ):
     
     xi = np.linspace( plotSettings['xrange'][0],  plotSettings['xrange'][1], 100, endpoint=True )
     yi = np.linspace( plotSettings['yrange'][0],  plotSettings['yrange'][1], 100, endpoint=True )
-    zi = griddata(x, y, z, xi, yi, interp='linear')
+    zi = griddata_mlab(x, y, z, xi, yi, interp='linear')
     
     ### --- Contours --- ###
     if 'contour_colormap' in plotSettings:

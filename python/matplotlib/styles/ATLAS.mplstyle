@@ -21,7 +21,7 @@ lines.markersize : 1
 axes.facecolor : white
 axes.titlesize : 18
 axes.labelsize : 18
-axes.labelpad : 15.0 # space between label and axis
+axes.labelpad : 0.0 # space between label and axis
 axes.grid : False
 axes.unicode_minus : False
 axes.titlepad  : 15.0
@@ -34,7 +34,7 @@ xtick.major.size  : 9
 xtick.major.width : 1.5
 xtick.minor.size  : 3
 xtick.minor.width : 1
-xtick.labelsize   : 10
+xtick.labelsize   : 14
 
 ## - y-axis
 ytick.minor.visible : True
@@ -42,7 +42,9 @@ ytick.minor.size  : 3
 ytick.minor.width : 1
 ytick.major.size  : 9
 ytick.major.width : 1.5
-ytick.labelsize   : 10
+ytick.labelsize   : 14
+
+# - Labels
 
 # - Ticks everywhere
 xtick.top    : True
