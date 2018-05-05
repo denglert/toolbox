@@ -78,7 +78,8 @@ def pandas_pixel( df,
         return fig, ax
 
 
-def create_griddata(x, y, z, x_num=100, y_num=100,  interp='cubic', backend='scipy', gaussian_filter_sigma=None):
+def create_griddata(x, y, z, x_num=100, y_num=100,  interp='cubic', backend='scipy',
+        gaussian_filter_sigma=None, reshape=None):
 
     xmin, xmax = x.min(), x.max()
     ymin, ymax = y.min(), y.max()
@@ -86,8 +87,10 @@ def create_griddata(x, y, z, x_num=100, y_num=100,  interp='cubic', backend='sci
     xi = np.linspace( xmin,  xmax, x_num, endpoint=True )
     yi = np.linspace( ymin,  ymax, y_num, endpoint=True )
 
-    if gaussian_filter_sigma is not None:
+    if (gaussian_filter_sigma is not None) and (reshape is not None):
+        z = z.reshape(reshape)
         z = gaussian_filter(z, gaussian_filter_sigma)
+        z = z.flatten()
     
     if backend == 'scipy':
         
@@ -113,6 +116,7 @@ def pandas_contour(df, x_col, y_col, z_col,
                    gaussian_filter_sigma=None,
                    contour_kwargs={},
                    colorbar_kwargs=False,
+                   griddata_kwargs={},
                    clabel_kwargs={},
                    *args,
                    **kwargs):
@@ -128,10 +132,11 @@ def pandas_contour(df, x_col, y_col, z_col,
     x, y, z = df[x_col], df[y_col], df[z_col]
 
 
-    xi, yi, zi = create_griddata(x, y, z, interp=interp, x_num=x_num, y_num=y_num,
-                gaussian_filter_sigma=gaussian_filter_sigma)
+    xi, yi, zi = create_griddata(x, y, z, **griddata_kwargs)
+#   xi, yi, zi = create_griddata(x, y, z, interp=interp, x_num=x_num, y_num=y_num,
+#               gaussian_filter_sigma=gaussian_filter_sigma)
 
-    if 'resize' in kwargs:
+    if kwargs.get('resize'):
         xi, yi, zi = np.resize(x, kwargs['resize']), np.resize(y, kwargs['resize']), np.resize(z, kwargs['resize'])
         if gaussian_filter_sigma is not None:
             zi = gaussian_filter(zi, gaussian_filter_sigma)
@@ -195,8 +200,7 @@ def pandas_contour(df, x_col, y_col, z_col,
         return return_tuple
 
 def pandas_contourf(df, x_col, y_col, z_col,
-                   interp='cubic', x_num=100, y_num=100,
-                   gaussian_filter_sigma=None,
+                   griddata_kwargs={},
                    contourf_kwargs={},
                    colorbar_kwargs=False,
                    **kwargs):
@@ -210,14 +214,10 @@ def pandas_contourf(df, x_col, y_col, z_col,
 
     x, y, z = df[x_col], df[y_col], df[z_col]
 
-    xi, yi, zi = create_griddata(x, y, z, interp=interp, x_num=x_num, y_num=y_num,
-            gaussian_filter_sigma=gaussian_filter_sigma)
-
-
+    xi, yi, zi = create_griddata(x, y, z, **griddata_kwargs)
 
     cs = plt.contourf(xi, yi, zi, **contourf_kwargs)
 
-    # - 
     # - https://stackoverflow.com/questions/43150687/colorbar-limits-are-not-respecting-set-vmin-vmax-in-plt-contourf-how-can-i-more
     if 'clim_min' in kwargs:
         m = plt.cm.ScalarMappable(cmap=kwargs['clim_cmap'])
