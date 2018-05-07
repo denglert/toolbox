@@ -113,7 +113,6 @@ def create_griddata(x, y, z, x_num=100, y_num=100,  interp='cubic', backend='sci
 
 def pandas_contour(df, x_col, y_col, z_col,
                    interp='cubic', x_num=100, y_num=100,
-                   gaussian_filter_sigma=None,
                    contour_kwargs={},
                    colorbar_kwargs=False,
                    griddata_kwargs={},
@@ -131,15 +130,18 @@ def pandas_contour(df, x_col, y_col, z_col,
 
     x, y, z = df[x_col], df[y_col], df[z_col]
 
+    if bool(griddata_kwargs):
+        xi, yi, zi = create_griddata(x, y, z, **griddata_kwargs)
+    else:
+        dfmesh = df.pivot(x_col, y_col, z_col)
+        xi, yi, zi = dfmesh.index.values, dfmesh.columns.values, dfmesh.values.T
 
-    xi, yi, zi = create_griddata(x, y, z, **griddata_kwargs)
+#   xi, yi, zi = create_griddata(x, y, z, **griddata_kwargs)
 #   xi, yi, zi = create_griddata(x, y, z, interp=interp, x_num=x_num, y_num=y_num,
 #               gaussian_filter_sigma=gaussian_filter_sigma)
 
     if kwargs.get('resize'):
         xi, yi, zi = np.resize(x, kwargs['resize']), np.resize(y, kwargs['resize']), np.resize(z, kwargs['resize'])
-        if gaussian_filter_sigma is not None:
-            zi = gaussian_filter(zi, gaussian_filter_sigma)
 
     cs = plt.contour(xi, yi, zi, **contour_kwargs)
 
@@ -214,8 +216,12 @@ def pandas_contourf(df, x_col, y_col, z_col,
 
     x, y, z = df[x_col], df[y_col], df[z_col]
 
-    xi, yi, zi = create_griddata(x, y, z, **griddata_kwargs)
-
+    if bool(griddata_kwargs):
+        xi, yi, zi = create_griddata(x, y, z, **griddata_kwargs)
+    else:
+        dfmesh = df.pivot(x_col, y_col, z_col)
+        xi, yi, zi = dfmesh.index.values, dfmesh.columns.values, dfmesh.values.T
+    
     cs = plt.contourf(xi, yi, zi, **contourf_kwargs)
 
     # - https://stackoverflow.com/questions/43150687/colorbar-limits-are-not-respecting-set-vmin-vmax-in-plt-contourf-how-can-i-more
