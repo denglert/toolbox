@@ -38,3 +38,14 @@ def get_notebook_name():
             if nn['kernel']['id'] == kernel_id:
                 relative_path = nn['notebook']['path']
                 return os.path.join(ss['notebook_dir'], relative_path)
+
+
+
+def save_notebook_to_html()
+
+    def save_notebook_to_html():
+        nb_name = get_notebook_name()
+        cmd = 'jupyter nbconvert --to html {notebook}'.format(notebook=nb_name)
+        print("Running os command:\n{}."format(cmd))
+        os_signal = os.system(cmd)
+        return os_signal == 0
