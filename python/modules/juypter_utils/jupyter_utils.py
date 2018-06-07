@@ -41,11 +41,27 @@ def get_notebook_name():
 
 
 
-def save_notebook_to_html()
 
-    def save_notebook_to_html():
-        nb_name = get_notebook_name()
-        cmd = 'jupyter nbconvert --to html {notebook}'.format(notebook=nb_name)
-        print("Running os command:\n{}."format(cmd))
-        os_signal = os.system(cmd)
-        return os_signal == 0
+# - Needs further dev to be able to overwrite output file
+def save_notebook_to_html(out_html_path=None):
+
+    notebook_path = get_current_notebook_path()
+    cmd = 'jupyter nbconvert --to html {notebook}'.format(notebook=notebook_path)
+    print("Running os command:\n{}.".format(cmd))
+    os_signal = os.system(cmd)
+
+    html_created_inplace_path = notebook_path.replace('ipynb', 'html')
+    html_created_inplace_name = os.path.basename(html_created_inplace_path)
+
+    if out_html_path is not None:
+        if os.path.isdir(out_html_path):
+            out_html_path = os.path.join(out_html_path, html_created_inplace_name)
+        shutil.move(html_created_inplace_path, out_html_path)
+    else:
+        out_html_path = html_created_inplace
+    
+    msg = "{} should be created".format(out_html_path)
+    print(msg)
+
+    return os_signal == 0
+
