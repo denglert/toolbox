@@ -1,16 +1,12 @@
 # toolbox
 
-This repo contains a collection of utility scripts and templates, making my everyday life a bit
-easier.
+This repo contains a collection of
+- `python` utility modules for
+    - common packages such as `matplotlib`, `pandas` etc.
+    - my various sandbox repos (statistics, machine learning, etc.)
+- scripts for data processing.
+- etc.
 
-The list of packages around which these scripts/modules are built include:
-- `pandas`
-- `jupyter`
-- `matplotlib`
-- `ROOT`
-- `RooFit`
-- `MadGraph`
-- ...
 
 ## Setup
 
@@ -18,5 +14,5 @@ To set up environment variables please source `./environment/setup.sh` from the 
 directory:
 
 ~~~~
-source ./environment/setup.sh
+source ./setup.sh
 ~~~~
