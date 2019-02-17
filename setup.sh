@@ -1,7 +1,5 @@
-# - Note:
-# - When sourcing this script the current working directory should be the root directory of the toolbox
-
-TOOLBOX_DIR=$(pwd)
+BASEDIR=$(dirname $(realpath "$BASH_SOURCE"))
+export TOOLBOX_DIR=${BASEDIR}
 
 ### --- Export environment variables --- ###
 
