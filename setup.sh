@@ -1,5 +1,9 @@
-BASEDIR=$(dirname $(realpath "$BASH_SOURCE"))
+# - Get the absolute path of the dir where the this setup script is residing.
+# - Should be compatible with both linux & mac.
+BASEDIR=$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 export TOOLBOX_DIR=${BASEDIR}
+
+echo "TOOLBOX_DIR=${TOOLBOX_DIR}"
 
 ### --- Export environment variables --- ###
 
