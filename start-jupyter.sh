@@ -3,7 +3,7 @@
 #source setup.sh
 if  [ -z "${TOOLBOX_DIR}" ]; then
 	echo "TOOLBOX_DIR variable not set up. Sourcing toolbox/setup.sh script..."
-	BASEDIR=$(dirname $(realpath "$BASH_SOURCE"))
+	BASEDIR=$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 	source ${BASEDIR}/setup.sh
 fi
 
