@@ -68,6 +68,21 @@ def rotate_tick_labels(ax,
 def set_major_locator(axis,
                       major_locator
                       ):
+    """
+    Sets the major locator on an axis.
+
+    Parameters
+    ----------
+    ax : mpl axis 
+
+    major_locator : str
+        Major locator.
+        Available options:
+        - year
+        - month
+        - day
+        - hour
+    """
 
     if major_locator == "year":
         axis.set_major_locator(mdates.YearLocator())
